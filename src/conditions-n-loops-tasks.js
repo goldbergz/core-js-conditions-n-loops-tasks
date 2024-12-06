@@ -409,8 +409,33 @@ function rotateMatrix(matrix) {
  *  [2, 9, 5, 9]    => [2, 5, 9, 9]
  *  [-2, 9, 5, -3]  => [-3, -2, 5, 9]
  */
-function sortByAsc(/* arr */) {
-  throw new Error('Not implemented');
+function sortByAsc(arr) {
+  const data = arr;
+  function partition(low, high) {
+    const pivot = data[high];
+    let i = low - 1;
+    for (let j = low; j < high; j += 1) {
+      if (data[j] <= pivot) {
+        i += 1;
+        const temp = arr[i];
+        data[i] = data[j];
+        data[j] = temp;
+      }
+    }
+    const temp = data[i + 1];
+    data[i + 1] = data[high];
+    data[high] = temp;
+    return i + 1;
+  }
+  function quickSort(low, high) {
+    if (low < high) {
+      const pi = partition(low, high);
+      quickSort(low, pi - 1);
+      quickSort(pi + 1, high);
+    }
+  }
+  quickSort(0, arr.length - 1);
+  return arr;
 }
 
 /**
@@ -451,8 +476,53 @@ function shuffleChar(/* str, iterations */) {
  * @param {number} number The source number
  * @returns {number} The nearest larger number, or original number if none exists.
  */
-function getNearestBigger(/* number */) {
-  throw new Error('Not implemented');
+function getNearestBigger(number) {
+  if (number < 10) return number;
+  const digits = [];
+  let temp = number;
+  while (temp > 0) {
+    digits.push(temp % 10);
+    temp = Math.floor(temp / 10);
+  }
+  const n = digits.length;
+  for (let i = 0; i < n / 2; i += 1) {
+    const swap = digits[i];
+    digits[i] = digits[n - 1 - i];
+    digits[n - 1 - i] = swap;
+  }
+  let pivot = -1;
+  for (let i = n - 2; i >= 0; i -= 1) {
+    if (digits[i] < digits[i + 1]) {
+      pivot = i;
+      break;
+    }
+  }
+  if (pivot === -1) return number;
+  let swapIndex = -1;
+  for (let i = n - 1; i > pivot; i -= 1) {
+    if (digits[i] > digits[pivot]) {
+      if (swapIndex === -1 || digits[i] < digits[swapIndex]) {
+        swapIndex = i;
+      }
+    }
+  }
+  const tempDigit = digits[pivot];
+  digits[pivot] = digits[swapIndex];
+  digits[swapIndex] = tempDigit;
+  for (let i = pivot + 1; i < n; i += 1) {
+    for (let j = i + 1; j < n; j += 1) {
+      if (digits[i] > digits[j]) {
+        const tempSwap = digits[i];
+        digits[i] = digits[j];
+        digits[j] = tempSwap;
+      }
+    }
+  }
+  let result = 0;
+  for (let i = 0; i < n; i += 1) {
+    result = result * 10 + digits[i];
+  }
+  return result;
 }
 
 module.exports = {
